@@ -1,0 +1,128 @@
+/* Reset defaults */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Body styling */
+body {
+    background: #f4f6f8;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+/* Page titles */
+h1 {
+    font-size: 2.8rem;
+    color: #1e3a8a;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: #1e40af;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+    margin-bottom: 40px;
+}
+
+select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+}
+
+/* Card container for sections */
+.section-card {
+    width: 100%;
+    max-width: 1000px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 40px;
+}
+
+/* Table container inside card */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Standings Table Styling */
+table.standings {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+/* Matches Table Styling */
+table.matches {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 400px;
+}
+
+/* Table header */
+th {
+    font-weight: 600;
+    padding: 12px 10px;
+    text-align: center;
+    border-radius: 6px 6px 0 0;
+}
+
+/* Standings header colors */
+table.standings th {
+    background-color: #1e40af; /* blue */
+    color: white;
+}
+
+/* Matches header colors */
+table.matches th {
+    background-color: #f59e0b; /* orange */
+    color: white;
+}
+
+/* Table body cells */
+td {
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Zebra striping */
+table.standings tr:nth-child(even) { background-color: #f9fafb; }
+table.matches tr:nth-child(even) { background-color: #fff7ed; }
+
+/* Hover effect */
+tr:hover {
+    background-color: rgba(30,64,175,0.1);
+    transition: 0.3s;
+}
+
+/* Team logos */
+.team-logo {
+    height: 25px;
+    width: auto;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* Responsive font size for small screens */
+@media (max-width: 600px) {
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.4rem; }
+    td, th { padding: 8px 5px; font-size: 0.9rem; }
+    .section-card { padding: 15px; }
+}

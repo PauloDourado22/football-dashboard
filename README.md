@@ -43,13 +43,13 @@ pip install flask requests
 
 ## Configuration
 
-The app currently uses an API key defined in `app.py`:
+The app uses an API key defined in `app.py`:
 
 ```python
-API_KEY = "1d38591406184f3c9d72e4de10911262"
+API_KEY = "YOUR_API_KEY_HERE"
 ```
 
-For production use, replace this key with your own Football-Data.org API key.
+For production use, replace this placeholder with your own Football-Data.org API key.
 
 ## Running the App
 

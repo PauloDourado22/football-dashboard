@@ -24,6 +24,7 @@ A simple Flask web dashboard that displays football league standings and upcomin
 - Python 3.8+
 - Flask
 - requests
+- python-dotenv
 
 ## Installation
 
@@ -38,18 +39,26 @@ source venv/bin/activate
 3. Install dependencies:
 
 ```bash
-pip install flask requests
+pip install -r requirements.txt
 ```
 
 ## Configuration
 
-The app uses an API key defined in `app.py`:
+The app reads its API key from the `API_KEY` environment variable via a `.env` file.
 
-```python
-API_KEY = "YOUR_API_KEY_HERE"
+1. Copy the example file:
+
+```bash
+cp .env.example .env
 ```
 
-For production use, replace this placeholder with your own Football-Data.org API key.
+2. Edit `.env` and set your own Football-Data.org API key:
+
+```
+API_KEY=your_football_data_api_key_here
+```
+
+`.env` is gitignored, so your key stays out of version control.
 
 ## Running the App
 

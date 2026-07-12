@@ -1,9 +1,14 @@
+import os
+
+from dotenv import load_dotenv
 from flask import Flask, render_template, request
 import requests
 
+load_dotenv()
+
 app = Flask(__name__)
 
-API_KEY = "1d38591406184f3c9d72e4de10911262"
+API_KEY = os.environ.get("API_KEY")
 
 # Supported leagues: key = API league ID, value = readable name
 LEAGUES = {
@@ -54,5 +59,5 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
 

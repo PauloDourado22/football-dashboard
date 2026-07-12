@@ -46,13 +46,7 @@ pip install -r requirements.txt
 
 The app reads its API key from the `API_KEY` environment variable via a `.env` file.
 
-1. Copy the example file:
-
-```bash
-cp .env.example .env
-```
-
-2. Edit `.env` and set your own Football-Data.org API key:
+Create a `.env` file in the project root with your own Football-Data.org API key:
 
 ```
 API_KEY=your_football_data_api_key_here

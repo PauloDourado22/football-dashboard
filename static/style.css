@@ -8,8 +8,8 @@
 
 /* Body styling */
 body {
-    background: #f4f6f8;
-    color: #333;
+    background: #f8fafc;
+    color: #334155;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -19,29 +19,85 @@ body {
 
 /* Page titles */
 h1 {
-    font-size: 2.8rem;
-    color: #1e3a8a;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #0f172a;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 h2 {
-    font-size: 1.8rem;
-    color: #1e40af;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #0f172a;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
-/* Form styling */
-form {
-    margin-bottom: 40px;
+/* League selection form */
+.league-form {
+    margin-bottom: 28px;
 }
 
 select {
     padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
     font-size: 1rem;
+    color: #334155;
+}
+
+/* Error banner shown when the API call fails */
+.error-banner {
+    width: 100%;
+    max-width: 1000px;
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Stat cards */
+.stat-cards {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.stat-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.stat-sub {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
 }
 
 /* Card container for sections */
@@ -49,10 +105,10 @@ select {
     width: 100%;
     max-width: 1000px;
     background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.07);
+    padding: 22px;
+    margin-bottom: 28px;
 }
 
 /* Table container inside card */
@@ -64,7 +120,7 @@ select {
 table.standings {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px;
+    min-width: 680px;
 }
 
 /* Matches Table Styling */
@@ -74,31 +130,61 @@ table.matches {
     min-width: 400px;
 }
 
+/* Results Table Styling */
+table.results {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 400px;
+}
+
+table.results th {
+    background-color: #059669;
+    color: white;
+}
+
+table.results tr:nth-child(even) { background-color: #f0fdf4; }
+
+.score {
+    font-weight: 700;
+    color: #0f172a;
+}
+
 /* Table header */
 th {
     font-weight: 600;
+    font-size: 0.85rem;
     padding: 12px 10px;
     text-align: center;
-    border-radius: 6px 6px 0 0;
 }
+
+th:first-child { border-radius: 8px 0 0 8px; }
+th:last-child { border-radius: 0 8px 8px 0; }
+
+.team-col { text-align: left !important; }
 
 /* Standings header colors */
 table.standings th {
-    background-color: #1e40af; /* blue */
+    background-color: #1e40af;
     color: white;
 }
 
 /* Matches header colors */
 table.matches th {
-    background-color: #f59e0b; /* orange */
+    background-color: #f59e0b;
     color: white;
 }
 
 /* Table body cells */
 td {
-    padding: 12px 10px;
+    padding: 11px 10px;
     text-align: center;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid #eef2f7;
+    font-size: 0.92rem;
+}
+
+td.points {
+    font-weight: 700;
+    color: #0f172a;
 }
 
 /* Zebra striping */
@@ -107,22 +193,105 @@ table.matches tr:nth-child(even) { background-color: #fff7ed; }
 
 /* Hover effect */
 tr:hover {
-    background-color: rgba(30,64,175,0.1);
-    transition: 0.3s;
+    background-color: rgba(30, 64, 175, 0.06);
+    transition: 0.2s;
 }
 
-/* Team logos */
-.team-logo {
-    height: 25px;
-    width: auto;
-    vertical-align: middle;
-    margin-right: 8px;
+/* Continental qualification / relegation zone highlighting */
+table.standings tr.zone-continental {
+    box-shadow: inset 4px 0 0 0 #1e40af;
 }
+
+table.standings tr.zone-relegation {
+    box-shadow: inset 4px 0 0 0 #dc2626;
+}
+
+/* Legend above the standings table explaining the zone colors */
+.zone-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+.zone-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    font-style: normal;
+}
+
+.legend-swatch.zone-continental { background-color: #1e40af; }
+.legend-swatch.zone-relegation { background-color: #dc2626; }
+
+/* Team cell: circular badge (crest or initials) + name */
+.team-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.team-badge {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #eef2f7;
+    color: #64748b;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.team-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Recent form dots (last 5 results, most recent first) */
+.form-dots {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.form-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.form-dot.w { background-color: #16a34a; }
+.form-dot.d { background-color: #f59e0b; }
+.form-dot.l { background-color: #dc2626; }
 
 /* Responsive font size for small screens */
 @media (max-width: 600px) {
-    h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.4rem; }
-    td, th { padding: 8px 5px; font-size: 0.9rem; }
+    h1 { font-size: 1.7rem; }
+    h2 { font-size: 1.15rem; }
+    td, th { padding: 8px 6px; font-size: 0.82rem; }
     .section-card { padding: 15px; }
+    .form-dot { width: 15px; height: 15px; font-size: 0.52rem; }
 }

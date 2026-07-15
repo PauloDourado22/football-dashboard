@@ -61,6 +61,59 @@ def test_standings_url_and_matches_url():
     )
 
 
+def test_scorers_team_and_head2head_urls():
+    assert api.scorers_url("PL") == "https://api.football-data.org/v4/competitions/PL/scorers?limit=10"
+    assert api.team_url(66) == "https://api.football-data.org/v4/teams/66"
+    assert api.team_matches_url(66, "SCHEDULED") == (
+        "https://api.football-data.org/v4/teams/66/matches?status=SCHEDULED&limit=5"
+    )
+    assert api.head2head_url(12345) == "https://api.football-data.org/v4/matches/12345/head2head?limit=10"
+
+
+def test_group_squad_by_position_orders_goalkeepers_first():
+    squad = [
+        {"name": "Striker Sam", "position": "Offence"},
+        {"name": "Keeper Kim", "position": "Goalkeeper"},
+        {"name": "Back Bob", "position": "Defence"},
+    ]
+    grouped = api.group_squad_by_position(squad)
+    assert [position for position, _ in grouped] == ["Goalkeeper", "Defence", "Offence"]
+
+
+def test_group_squad_by_position_buckets_unknown_positions_as_other():
+    squad = [{"name": "Mystery Mo", "position": "Wingback"}]
+    grouped = api.group_squad_by_position(squad)
+    assert grouped == [("Other", squad)]
+
+
+def test_group_squad_by_position_handles_empty_squad():
+    assert api.group_squad_by_position([]) == []
+
+
+def test_summarize_head2head_extracts_aggregates_with_defaults():
+    h2h_data = {
+        "aggregates": {
+            "numberOfMatches": 5,
+            "totalGoals": 12,
+            "homeTeam": {"id": 1, "name": "Team 1", "wins": 2, "draws": 1, "losses": 2},
+            "awayTeam": {"id": 2, "name": "Team 2", "wins": 2, "draws": 1, "losses": 2},
+        },
+        "matches": [{"id": 1}],
+    }
+    summary = api.summarize_head2head(h2h_data)
+    assert summary["number_of_matches"] == 5
+    assert summary["total_goals"] == 12
+    assert summary["home_team"]["name"] == "Team 1"
+    assert summary["matches"] == [{"id": 1}]
+
+
+def test_summarize_head2head_handles_missing_aggregates():
+    summary = api.summarize_head2head({})
+    assert summary["number_of_matches"] == 0
+    assert summary["home_team"] == {}
+    assert summary["matches"] == []
+
+
 def test_fetch_json_success_without_cache():
     fake_response = Mock(status_code=200)
     fake_response.json.return_value = {"ok": True}

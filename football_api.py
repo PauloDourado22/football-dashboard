@@ -46,6 +46,22 @@ def matches_url(league_id, status):
     return f"https://api.football-data.org/v4/competitions/{league_id}/matches?status={status}"
 
 
+def scorers_url(league_id):
+    return f"https://api.football-data.org/v4/competitions/{league_id}/scorers?limit=10"
+
+
+def team_url(team_id):
+    return f"https://api.football-data.org/v4/teams/{team_id}"
+
+
+def team_matches_url(team_id, status):
+    return f"https://api.football-data.org/v4/teams/{team_id}/matches?status={status}&limit=5"
+
+
+def head2head_url(match_id):
+    return f"https://api.football-data.org/v4/matches/{match_id}/head2head?limit=10"
+
+
 def fetch_json(url, headers, cache=None):
     """GET a URL (using `cache` when available) and return (data, error_message).
 
@@ -75,6 +91,54 @@ def fetch_json(url, headers, cache=None):
     if cache is not None:
         cache.set(url, data)
     return data, None
+
+
+# Squad entries use these position labels (distinct from the scorer/person
+# position vocabulary, e.g. "Attacker" — the API isn't consistent about this
+# between resources). Anything not in this list is grouped under "Other"
+# rather than dropped, since free-tier data occasionally omits/renames a
+# position label.
+SQUAD_POSITION_ORDER = ["Goalkeeper", "Defence", "Midfield", "Offence"]
+
+
+def group_squad_by_position(squad):
+    """Group a team's squad list into (position, [players]) tuples, ordered
+    goalkeepers-first the way a matchday program would list them. Any
+    position not in SQUAD_POSITION_ORDER is bucketed under "Other" at the end
+    rather than silently dropped.
+    """
+    groups = {position: [] for position in SQUAD_POSITION_ORDER}
+    other = []
+    for player in squad:
+        position = player.get("position")
+        if position in groups:
+            groups[position].append(player)
+        else:
+            other.append(player)
+
+    ordered = [(position, players) for position, players in groups.items() if players]
+    if other:
+        ordered.append(("Other", other))
+    return ordered
+
+
+def summarize_head2head(h2h_data):
+    """Pull out the bits of a /matches/{id}/head2head response the template
+    needs, with safe defaults everywhere.
+
+    Kept as its own function (rather than reading nested dicts in the
+    template) because this endpoint's shape isn't as thoroughly documented
+    as standings/scorers — better to have one place that tolerates a missing
+    or renamed field than scattered `.get()` chains across the template.
+    """
+    aggregates = h2h_data.get("aggregates", {})
+    return {
+        "number_of_matches": aggregates.get("numberOfMatches", 0),
+        "total_goals": aggregates.get("totalGoals", 0),
+        "home_team": aggregates.get("homeTeam", {}),
+        "away_team": aggregates.get("awayTeam", {}),
+        "matches": h2h_data.get("matches", []),
+    }
 
 
 def compute_form(team_id, finished_matches, limit=5):

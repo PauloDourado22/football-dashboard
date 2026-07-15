@@ -34,9 +34,144 @@ h2 {
     margin-bottom: 16px;
 }
 
-/* League selection form */
+/* League selection bar: dropdown + favorite toggle side by side */
+.league-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
 .league-form {
-    margin-bottom: 28px;
+    margin-bottom: 0;
+}
+
+/* Star toggle buttons (favorite league / favorite team) */
+.favorite-form {
+    display: inline-block;
+}
+
+.star-button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #64748b;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.star-button.active {
+    background: #fffbeb;
+    border-color: #f59e0b;
+    color: #b45309;
+    font-weight: 600;
+}
+
+/* Quick-jump chips for favorited leagues/teams */
+.favorites-bar {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.favorite-chip {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.favorite-chip:hover {
+    border-color: #f59e0b;
+}
+
+/* Back link on team/match/error pages */
+.back-link {
+    width: 100%;
+    max-width: 1000px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+}
+
+.back-link a {
+    color: #1e40af;
+    text-decoration: none;
+}
+
+/* Team profile header */
+.team-header {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.team-header-crest {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+}
+
+.team-header h1 {
+    text-align: left;
+    margin-bottom: 4px;
+    font-size: 1.8rem;
+}
+
+.team-meta {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.team-header .favorite-form {
+    margin-left: auto;
+}
+
+/* Squad list on team profile */
+.squad-group-title {
+    font-size: 0.9rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 16px 0 8px;
+}
+
+.squad-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.squad-player {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.squad-player-name { font-weight: 600; color: #0f172a; }
+.squad-player-number, .squad-player-nation { color: #94a3b8; font-size: 0.78rem; }
+
+.muted-note {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 12px 0;
 }
 
 select {
@@ -144,9 +279,32 @@ table.results th {
 
 table.results tr:nth-child(even) { background-color: #f0fdf4; }
 
+/* Scorers Table Styling */
+table.scorers {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 400px;
+}
+
+table.scorers th {
+    background-color: #7c3aed;
+    color: white;
+}
+
+table.scorers tr:nth-child(even) { background-color: #f5f3ff; }
+
 .score {
     font-weight: 700;
     color: #0f172a;
+}
+
+.score a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.score a:hover {
+    text-decoration: underline;
 }
 
 /* Table header */
@@ -234,12 +392,20 @@ table.standings tr.zone-relegation {
 .legend-swatch.zone-continental { background-color: #1e40af; }
 .legend-swatch.zone-relegation { background-color: #dc2626; }
 
-/* Team cell: circular badge (crest or initials) + name */
+/* Team cell: circular badge (crest or initials) + name. Rendered as an <a>
+   so team names link to their profile page — reset link styling so it
+   still reads as plain text, not a blue underlined link. */
 .team-cell {
     display: flex;
     align-items: center;
     gap: 10px;
     justify-content: flex-start;
+    text-decoration: none;
+    color: inherit;
+}
+
+.team-cell:hover {
+    text-decoration: underline;
 }
 
 .team-badge {

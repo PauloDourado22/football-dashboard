@@ -9,14 +9,34 @@
     <h1>Football Dashboard</h1>
 
     <!-- League selection -->
-    <form method="GET" class="league-form">
-        <label for="league">Select League: </label>
-        <select name="league" id="league" onchange="this.form.submit()">
-            {% for id, name in leagues.items() %}
-                <option value="{{ id }}" {% if id == selected_league %}selected{% endif %}>{{ name }}</option>
-            {% endfor %}
-        </select>
-    </form>
+    <div class="league-bar">
+        <form method="GET" class="league-form">
+            <label for="league">Select League: </label>
+            <select name="league" id="league" onchange="this.form.submit()">
+                {% for id, name in leagues.items() %}
+                    <option value="{{ id }}" {% if id == selected_league %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <form method="POST" action="{{ url_for('toggle_favorite_league') }}" class="favorite-form">
+            <input type="hidden" name="league_id" value="{{ selected_league }}">
+            <input type="hidden" name="next" value="{{ request.full_path }}">
+            <button type="submit" class="star-button {% if selected_league in favorite_leagues %}active{% endif %}">
+                {% if selected_league in favorite_leagues %}&#9733; Favorited league{% else %}&#9734; Favorite this league{% endif %}
+            </button>
+        </form>
+    </div>
+
+    {% if favorite_teams or favorite_leagues %}
+    <div class="favorites-bar">
+        {% for code in favorite_leagues %}
+        <a class="favorite-chip" href="{{ url_for('home', league=code) }}">{{ leagues.get(code, code) }}</a>
+        {% endfor %}
+        {% for team in favorite_teams %}
+        <a class="favorite-chip" href="{{ url_for('team_profile', team_id=team.id) }}">&#9733; {{ team.name }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     {% if error %}
     <div class="error-banner">{{ error }}</div>
@@ -80,7 +100,7 @@
                         {%- endif %}">
                         <td>{{ team.position }}</td>
                         <td class="team-col">
-                            <div class="team-cell">
+                            <a class="team-cell" href="{{ url_for('team_profile', team_id=team.team.id) }}">
                                 <span class="team-badge">
                                     {% if team.team.crest %}
                                     <img src="{{ team.team.crest }}" alt="">
@@ -89,7 +109,7 @@
                                     {% endif %}
                                 </span>
                                 {{ team.team.name }}
-                            </div>
+                            </a>
                         </td>
                         <td>{{ team.playedGames }}</td>
                         <td>{{ team.won }}</td>
@@ -110,6 +130,46 @@
         </div>
     </div>
 
+    <!-- Top Scorers Section -->
+    {% if scorers %}
+    <div class="section-card">
+        <h2>Top Scorers</h2>
+        <div class="table-container">
+            <table class="scorers">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th class="team-col">Team</th>
+                        <th>Goals</th>
+                        <th>Assists</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for scorer in scorers %}
+                    <tr>
+                        <td>{{ scorer.player.name }}</td>
+                        <td class="team-col">
+                            <a class="team-cell" href="{{ url_for('team_profile', team_id=scorer.team.id) }}">
+                                <span class="team-badge">
+                                    {% if scorer.team.crest %}
+                                    <img src="{{ scorer.team.crest }}" alt="">
+                                    {% else %}
+                                    {{ scorer.team.name[:2]|upper }}
+                                    {% endif %}
+                                </span>
+                                {{ scorer.team.name }}
+                            </a>
+                        </td>
+                        <td class="points">{{ scorer.goals }}</td>
+                        <td>{{ scorer.assists or 0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Recent Results Section -->
     <div class="section-card">
         <h2>Recent Results</h2>
@@ -128,7 +188,7 @@
                     <tr>
                         <td>{{ match.utcDate[:10] }}</td>
                         <td>
-                            <div class="team-cell">
+                            <a class="team-cell" href="{{ url_for('team_profile', team_id=match.homeTeam.id) }}">
                                 <span class="team-badge">
                                     {% if match.homeTeam.crest %}
                                     <img src="{{ match.homeTeam.crest }}" alt="">
@@ -137,11 +197,13 @@
                                     {% endif %}
                                 </span>
                                 {{ match.homeTeam.name }}
-                            </div>
+                            </a>
                         </td>
-                        <td class="score">{{ match.score.fullTime.home }} - {{ match.score.fullTime.away }}</td>
+                        <td class="score">
+                            <a href="{{ url_for('match_detail', match_id=match.id) }}">{{ match.score.fullTime.home }} - {{ match.score.fullTime.away }}</a>
+                        </td>
                         <td>
-                            <div class="team-cell">
+                            <a class="team-cell" href="{{ url_for('team_profile', team_id=match.awayTeam.id) }}">
                                 <span class="team-badge">
                                     {% if match.awayTeam.crest %}
                                     <img src="{{ match.awayTeam.crest }}" alt="">
@@ -150,7 +212,7 @@
                                     {% endif %}
                                 </span>
                                 {{ match.awayTeam.name }}
-                            </div>
+                            </a>
                         </td>
                     </tr>
                     {% else %}
@@ -171,6 +233,7 @@
                         <th>Date</th>
                         <th>Home Team</th>
                         <th>Away Team</th>
+                        <th>H2H</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -178,7 +241,7 @@
                     <tr>
                         <td>{{ match.utcDate[:10] }} {{ match.utcDate[11:16] }}</td>
                         <td>
-                            <div class="team-cell">
+                            <a class="team-cell" href="{{ url_for('team_profile', team_id=match.homeTeam.id) }}">
                                 <span class="team-badge">
                                     {% if match.homeTeam.crest %}
                                     <img src="{{ match.homeTeam.crest }}" alt="">
@@ -187,10 +250,10 @@
                                     {% endif %}
                                 </span>
                                 {{ match.homeTeam.name }}
-                            </div>
+                            </a>
                         </td>
                         <td>
-                            <div class="team-cell">
+                            <a class="team-cell" href="{{ url_for('team_profile', team_id=match.awayTeam.id) }}">
                                 <span class="team-badge">
                                     {% if match.awayTeam.crest %}
                                     <img src="{{ match.awayTeam.crest }}" alt="">
@@ -199,11 +262,12 @@
                                     {% endif %}
                                 </span>
                                 {{ match.awayTeam.name }}
-                            </div>
+                            </a>
                         </td>
+                        <td><a href="{{ url_for('match_detail', match_id=match.id) }}">View</a></td>
                     </tr>
                     {% else %}
-                    <tr><td colspan="3">No upcoming matches scheduled.</td></tr>
+                    <tr><td colspan="4">No upcoming matches scheduled.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

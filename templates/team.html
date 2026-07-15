@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ team.name }} — Football Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <p class="back-link"><a href="{{ url_for('home') }}">&larr; Back to standings</a></p>
+
+    <div class="team-header">
+        {% if team.crest %}
+        <img src="{{ team.crest }}" alt="" class="team-header-crest">
+        {% endif %}
+        <div>
+            <h1>{{ team.name }}</h1>
+            {% if team.venue or team.founded %}
+            <p class="team-meta">
+                {% if team.venue %}{{ team.venue }}{% endif %}
+                {% if team.founded %} &middot; Founded {{ team.founded }}{% endif %}
+            </p>
+            {% endif %}
+        </div>
+        <form method="POST" action="{{ url_for('toggle_favorite_team') }}" class="favorite-form">
+            <input type="hidden" name="team_id" value="{{ team.id }}">
+            <input type="hidden" name="team_name" value="{{ team.name }}">
+            <input type="hidden" name="team_crest" value="{{ team.crest or '' }}">
+            <input type="hidden" name="next" value="{{ request.path }}">
+            <button type="submit" class="star-button {% if is_favorite %}active{% endif %}">
+                {% if is_favorite %}&#9733; Favorited{% else %}&#9734; Add to favorites{% endif %}
+            </button>
+        </form>
+    </div>
+
+    {% if squad_by_position %}
+    <div class="section-card">
+        <h2>Squad</h2>
+        {% for position, players in squad_by_position %}
+        <h3 class="squad-group-title">{{ position }}</h3>
+        <div class="squad-grid">
+            {% for player in players %}
+            <div class="squad-player">
+                <span class="squad-player-name">{{ player.name }}</span>
+                {% if player.shirtNumber %}<span class="squad-player-number">#{{ player.shirtNumber }}</span>{% endif %}
+                {% if player.nationality %}<span class="squad-player-nation">{{ player.nationality }}</span>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="section-card">
+        <h2>Recent Results</h2>
+        {% if matches_unavailable %}
+        <p class="muted-note">Match history isn't available for this team on the current API plan.</p>
+        {% else %}
+        <div class="table-container">
+            <table class="results">
+                <thead>
+                    <tr><th>Date</th><th>Home Team</th><th>Score</th><th>Away Team</th></tr>
+                </thead>
+                <tbody>
+                    {% for match in recent_matches %}
+                    <tr>
+                        <td>{{ match.utcDate[:10] }}</td>
+                        <td>{{ match.homeTeam.name }}</td>
+                        <td class="score">{{ match.score.fullTime.home }} - {{ match.score.fullTime.away }}</td>
+                        <td>{{ match.awayTeam.name }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4">No recent results available.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="section-card">
+        <h2>Upcoming Fixtures</h2>
+        {% if matches_unavailable %}
+        <p class="muted-note">Fixture list isn't available for this team on the current API plan.</p>
+        {% else %}
+        <div class="table-container">
+            <table class="matches">
+                <thead>
+                    <tr><th>Date</th><th>Home Team</th><th>Away Team</th></tr>
+                </thead>
+                <tbody>
+                    {% for match in upcoming_matches %}
+                    <tr>
+                        <td>{{ match.utcDate[:10] }}</td>
+                        <td>{{ match.homeTeam.name }}</td>
+                        <td>{{ match.awayTeam.name }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="3">No upcoming fixtures scheduled.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

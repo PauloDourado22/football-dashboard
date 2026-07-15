@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Head-to-Head — Football Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <p class="back-link"><a href="{{ url_for('home') }}">&larr; Back to standings</a></p>
+
+    <h1>Head-to-Head</h1>
+
+    <div class="stat-cards">
+        <div class="stat-card">
+            <p class="stat-label">Meetings</p>
+            <p class="stat-value">{{ summary.number_of_matches }}</p>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Total goals</p>
+            <p class="stat-value">{{ summary.total_goals }}</p>
+        </div>
+        {% if summary.home_team %}
+        <div class="stat-card">
+            <p class="stat-label">{{ summary.home_team.name }}</p>
+            <p class="stat-value">{{ summary.home_team.wins }}W</p>
+            <p class="stat-sub">{{ summary.home_team.draws }}D &middot; {{ summary.home_team.losses }}L</p>
+        </div>
+        {% endif %}
+        {% if summary.away_team %}
+        <div class="stat-card">
+            <p class="stat-label">{{ summary.away_team.name }}</p>
+            <p class="stat-value">{{ summary.away_team.wins }}W</p>
+            <p class="stat-sub">{{ summary.away_team.draws }}D &middot; {{ summary.away_team.losses }}L</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="section-card">
+        <h2>Past Meetings</h2>
+        <div class="table-container">
+            <table class="results">
+                <thead>
+                    <tr><th>Date</th><th>Home Team</th><th>Score</th><th>Away Team</th></tr>
+                </thead>
+                <tbody>
+                    {% for match in summary.matches %}
+                    <tr>
+                        <td>{{ match.utcDate[:10] }}</td>
+                        <td>{{ match.homeTeam.name }}</td>
+                        <td class="score">{{ match.score.fullTime.home }} - {{ match.score.fullTime.away }}</td>
+                        <td>{{ match.awayTeam.name }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4">No previous meetings on record.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

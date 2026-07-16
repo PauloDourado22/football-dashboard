@@ -1,37 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{{ leagues[selected_league] }} — Football Dashboard{% endblock %}
 {% block content %}
-    <h1>Football Dashboard</h1>
-
-    <!-- League selection -->
-    <div class="league-bar">
-        <form method="GET" class="league-form">
-            <label for="league">Select League: </label>
-            <select name="league" id="league" onchange="this.form.submit()">
-                {% for id, name in leagues.items() %}
-                    <option value="{{ id }}" {% if id == selected_league %}selected{% endif %}>{{ name }}</option>
-                {% endfor %}
-            </select>
-        </form>
-        <form method="POST" action="{{ url_for('toggle_favorite_league') }}" class="favorite-form">
-            <input type="hidden" name="league_id" value="{{ selected_league }}">
-            <input type="hidden" name="next" value="{{ request.full_path }}">
-            <button type="submit" class="star-button {% if selected_league in favorite_leagues %}active{% endif %}">
-                {% if selected_league in favorite_leagues %}&#9733; Favorited league{% else %}&#9734; Favorite this league{% endif %}
-            </button>
-        </form>
-    </div>
-
-    {% if favorite_teams or favorite_leagues %}
-    <div class="favorites-bar">
-        {% for code in favorite_leagues %}
-        <a class="favorite-chip" href="{{ url_for('home', league=code) }}">{{ leagues.get(code, code) }}</a>
-        {% endfor %}
-        {% for team in favorite_teams %}
-        <a class="favorite-chip" href="{{ url_for('team_profile', team_id=team.id) }}">&#9733; {{ team.name }}</a>
-        {% endfor %}
-    </div>
-    {% endif %}
+    <h1>{{ leagues[selected_league] }}</h1>
 
     {% if error %}
     <div class="error-banner">{{ error }}</div>

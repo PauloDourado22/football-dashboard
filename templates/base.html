@@ -10,6 +10,69 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    {% block content %}{% endblock %}
+    <div class="app-shell">
+        <!-- Checkbox-driven off-canvas toggle: no JS needed for the mobile
+             drawer. Clicking either label (open hamburger or close X) toggles
+             the same checkbox because both use the same `for` target. -->
+        <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle-checkbox">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="{{ url_for('home') }}" class="brand">&#9917; Football Dashboard</a>
+                <label for="sidebar-toggle" class="sidebar-close" aria-label="Close menu">&times;</label>
+            </div>
+
+            <nav class="sidebar-nav">
+                <p class="sidebar-section-title">Leagues</p>
+                <ul class="sidebar-list">
+                    {% for id, name in leagues.items() %}
+                    <li class="sidebar-row">
+                        <a class="sidebar-link {% if id == selected_league %}active{% endif %}"
+                           href="{{ url_for('home', league=id) }}">{{ name }}</a>
+                        <form method="POST" action="{{ url_for('toggle_favorite_league') }}" class="sidebar-star-form">
+                            <input type="hidden" name="league_id" value="{{ id }}">
+                            <input type="hidden" name="next" value="{{ request.full_path }}">
+                            <button type="submit"
+                                    class="sidebar-star {% if id in favorite_leagues %}active{% endif %}"
+                                    data-league="{{ id }}"
+                                    aria-label="{% if id in favorite_leagues %}Unfavorite{% else %}Favorite{% endif %} {{ name }}">
+                                {% if id in favorite_leagues %}&#9733;{% else %}&#9734;{% endif %}
+                            </button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <p class="sidebar-section-title">Favorite Teams</p>
+                {% if favorite_teams %}
+                <ul class="sidebar-list">
+                    {% for team in favorite_teams %}
+                    <li>
+                        <a class="sidebar-link sidebar-team-link" href="{{ url_for('team_profile', team_id=team.id) }}">
+                            <span class="sidebar-team-badge">
+                                {% if team.crest %}<img src="{{ team.crest }}" alt="">{% else %}{{ team.name[:2]|upper }}{% endif %}
+                            </span>
+                            {{ team.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="sidebar-empty">Star a team on its profile page to pin it here.</p>
+                {% endif %}
+            </nav>
+        </aside>
+
+        <div class="app-main">
+            <header class="mobile-topbar">
+                <label for="sidebar-toggle" class="sidebar-open" aria-label="Open menu">&#9776;</label>
+                <span class="brand">&#9917; Football Dashboard</span>
+            </header>
+
+            <main class="main-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
 </body>
 </html>

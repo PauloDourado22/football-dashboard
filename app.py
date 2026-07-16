@@ -68,6 +68,26 @@ def _api_headers():
     return {"X-Auth-Token": API_KEY}
 
 
+@app.context_processor
+def inject_sidebar_context():
+    """The sidebar (leagues nav + favorite teams) renders on every page, so
+    every template needs this data — including team.html and match.html,
+    which never fetched it before. A context processor beats passing the
+    same three kwargs from every render_template call.
+
+    `selected_league` defaults to None here (no page-level relevance on the
+    team/match pages); home() overrides it explicitly with the active league,
+    and Flask always lets an explicit render_template kwarg win over a
+    context processor's value for the same key.
+    """
+    return {
+        "leagues": api.LEAGUES,
+        "favorite_teams": _favorite_teams(),
+        "favorite_leagues": _favorite_leagues(),
+        "selected_league": None,
+    }
+
+
 @app.route("/", methods=["GET"])
 def home():
     # GET (query string) instead of POST, so a league selection is a real,
@@ -88,14 +108,11 @@ def home():
             matches=[],
             results=[],
             scorers=[],
-            leagues=api.LEAGUES,
             selected_league=league_id,
             matchday=None,
             zones=api.ZONE_CONFIG.get(league_id),
             leader=None,
             next_match=None,
-            favorite_teams=_favorite_teams(),
-            favorite_leagues=_favorite_leagues(),
             error=message,
         ), 502
 
@@ -146,14 +163,11 @@ def home():
         matches=matches,
         results=results,
         scorers=scorers,
-        leagues=api.LEAGUES,
         selected_league=league_id,
         matchday=current_matchday,
         zones=api.ZONE_CONFIG.get(league_id),
         leader=table[0] if table else None,
         next_match=matches[0] if matches else None,
-        favorite_teams=_favorite_teams(),
-        favorite_leagues=_favorite_leagues(),
         error=None,
     )
 

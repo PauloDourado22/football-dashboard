@@ -28,6 +28,7 @@
     --wine: #7c3141;
     --wine-tint: #f6e9eb;
     --sage: #3f6b52;
+    --sidebar-width: 250px;
     --font-display: 'Fraunces', Georgia, serif;
     --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 12px 28px rgba(28, 25, 23, 0.06);
@@ -38,16 +39,154 @@ body {
     background: var(--page-bg);
     color: var(--text-primary);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 48px 20px 64px;
-    animation: fade-in 0.4s ease;
 }
 
 @keyframes fade-in {
     from { opacity: 0; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- App shell: sidebar + main content, side by side ---------- */
+
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.sidebar-toggle-checkbox { display: none; }
+
+.sidebar {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 18px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.brand {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.sidebar-close { display: none; }
+
+.sidebar-section-title {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin: 20px 0 8px;
+}
+
+.sidebar-section-title:first-of-type { margin-top: 0; }
+
+.sidebar-list { list-style: none; }
+
+.sidebar-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sidebar-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sidebar-link:hover { background: var(--surface-muted); color: var(--text-primary); }
+
+.sidebar-link.active {
+    background: var(--gold-tint);
+    color: var(--gold-text);
+    font-weight: 500;
+}
+
+.sidebar-star-form { flex-shrink: 0; }
+
+.sidebar-star {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 6px;
+    line-height: 1;
+}
+
+.sidebar-star:hover { color: var(--gold-text); background: var(--surface-muted); }
+.sidebar-star.active { color: var(--gold); }
+
+.sidebar-team-badge {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--surface-muted);
+    color: var(--text-secondary);
+    font-size: 0.58rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sidebar-team-badge img { width: 100%; height: 100%; object-fit: cover; }
+
+.sidebar-empty {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    line-height: 1.4;
+}
+
+/* ---------- Main content area ---------- */
+
+.app-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-topbar { display: none; }
+
+.main-content {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 32px 64px;
+    animation: fade-in 0.4s ease;
 }
 
 /* Page titles */
@@ -72,29 +211,7 @@ h2 {
 
 h3 { font-family: var(--font-display); font-weight: 500; }
 
-/* League selection bar */
-.league-bar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 18px;
-}
-
-.league-form { margin-bottom: 0; }
-
-select {
-    padding: 9px 14px;
-    border-radius: 6px;
-    border: 1px solid var(--border-strong);
-    background: var(--surface);
-    font-family: var(--font-body);
-    font-size: 0.92rem;
-    color: var(--text-primary);
-}
-
-/* Star toggle buttons */
+/* Star toggle button (team-profile favorite toggle) */
 .favorite-form { display: inline-block; }
 
 .star-button {
@@ -118,34 +235,9 @@ select {
     font-weight: 500;
 }
 
-/* Favorite chips */
-.favorites-bar {
-    width: 100%;
-    max-width: 1000px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
-}
-
-.favorite-chip {
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    font-size: 0.8rem;
-    text-decoration: none;
-    transition: border-color 0.15s ease;
-}
-
-.favorite-chip:hover { border-color: var(--gold); }
-
 /* Error banner */
 .error-banner {
     width: 100%;
-    max-width: 1000px;
     background-color: var(--wine-tint);
     color: var(--wine);
     border: 1px solid #e6c3cb;
@@ -159,7 +251,6 @@ select {
 /* Stat cards */
 .stat-cards {
     width: 100%;
-    max-width: 1000px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 16px;
@@ -199,7 +290,6 @@ select {
 /* Section cards */
 .section-card {
     width: 100%;
-    max-width: 1000px;
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -329,14 +419,13 @@ table.standings tr.zone-relegation td:first-child { box-shadow: inset 3px 0 0 0 
 .form-dot.l { background-color: var(--wine); }
 
 /* Back link */
-.back-link { width: 100%; max-width: 1000px; margin-bottom: 18px; font-size: 0.9rem; }
+.back-link { width: 100%; margin-bottom: 18px; font-size: 0.9rem; }
 .back-link a { color: var(--gold-text); text-decoration: none; }
 .back-link a:hover { text-decoration: underline; }
 
 /* Team profile header */
 .team-header {
     width: 100%;
-    max-width: 1000px;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -377,7 +466,37 @@ table.standings tr.zone-relegation td:first-child { box-shadow: inset 3px 0 0 0 
 
 .muted-note { color: var(--text-muted); font-size: 0.88rem; text-align: center; padding: 14px 0; }
 
-@media (max-width: 600px) {
+/* ---------- Responsive: sidebar becomes an off-canvas drawer ---------- */
+
+@media (max-width: 860px) {
+    .sidebar {
+        position: fixed;
+        left: calc(-1 * var(--sidebar-width) - 20px);
+        top: 0;
+        z-index: 50;
+        box-shadow: var(--shadow-card);
+        transition: left 0.2s ease;
+    }
+
+    .sidebar-toggle-checkbox:checked ~ .sidebar { left: 0; }
+
+    .sidebar-close { display: block; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
+
+    .mobile-topbar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        position: sticky;
+        top: 0;
+        z-index: 40;
+    }
+
+    .sidebar-open { font-size: 1.3rem; cursor: pointer; color: var(--text-primary); }
+
+    .main-content { padding: 32px 20px 48px; }
     h1 { font-size: 1.9rem; }
     h2 { font-size: 1.2rem; }
     td, th { padding: 9px 6px; font-size: 0.82rem; }

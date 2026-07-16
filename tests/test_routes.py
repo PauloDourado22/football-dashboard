@@ -80,14 +80,20 @@ def test_get_query_string_selects_league(client):
     with patch("football_api.requests.get", side_effect=fake_get_factory()):
         response = client.get("/?league=PD")
     assert response.status_code == 200
-    assert b'value="PD" selected' in response.data
+    soup = BeautifulSoup(response.data, "html.parser")
+    active_link = soup.select_one("a.sidebar-link.active")
+    assert active_link is not None
+    assert active_link["href"] == "/?league=PD"
 
 
 def test_invalid_league_falls_back_to_pl(client):
     with patch("football_api.requests.get", side_effect=fake_get_factory()):
         response = client.get("/?league=NOT_REAL")
     assert response.status_code == 200
-    assert b'value="PL" selected' in response.data
+    soup = BeautifulSoup(response.data, "html.parser")
+    active_link = soup.select_one("a.sidebar-link.active")
+    assert active_link is not None
+    assert active_link["href"] == "/?league=PL"
 
 
 def test_timeout_returns_502_with_error_banner(client):
@@ -328,16 +334,22 @@ def test_toggle_favorite_league_adds_and_removes(client):
             "/favorites/league/toggle", data={"league_id": "PD", "next": "/"}
         )
         assert response.status_code == 302
+
         home_response = client.get("/")
-        assert "favorite-chip" in home_response.data.decode()
+        soup = BeautifulSoup(home_response.data, "html.parser")
+        star = soup.select_one('button.sidebar-star[data-league="PD"]')
+        assert "active" in star["class"]
 
         client.post("/favorites/league/toggle", data={"league_id": "PD", "next": "/"})
         home_response = client.get("/")
-        assert "favorite-chip" not in home_response.data.decode()
+        soup = BeautifulSoup(home_response.data, "html.parser")
+        star = soup.select_one('button.sidebar-star[data-league="PD"]')
+        assert "active" not in star["class"]
 
 
 def test_toggle_favorite_league_ignores_unknown_league_id(client):
     with patch("football_api.requests.get", side_effect=fake_get_factory()):
         client.post("/favorites/league/toggle", data={"league_id": "NOT_REAL", "next": "/"})
         home_response = client.get("/")
-    assert "favorite-chip" not in home_response.data.decode()
+    soup = BeautifulSoup(home_response.data, "html.parser")
+    assert soup.select("button.sidebar-star.active") == []

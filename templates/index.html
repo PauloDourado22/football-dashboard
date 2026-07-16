@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Football Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}{{ leagues[selected_league] }} — Football Dashboard{% endblock %}
+{% block content %}
     <h1>Football Dashboard</h1>
 
     <!-- League selection -->
@@ -273,5 +268,4 @@
             </table>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ team.name }} — Football Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}{{ team.name }} — Football Dashboard{% endblock %}
+{% block content %}
     <p class="back-link"><a href="{{ url_for('home') }}">&larr; Back to standings</a></p>
 
     <div class="team-header">
@@ -102,5 +97,4 @@
         </div>
         {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}

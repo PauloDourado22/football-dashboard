@@ -84,6 +84,12 @@ def fetch_json(url, headers, cache=None):
     except requests.exceptions.RequestException:
         return None, "Could not reach the football data service. Please try again shortly."
 
+    if response.status_code == 429:
+        return None, (
+            "You've hit football-data.org's rate limit (10 requests/minute on "
+            "the free tier). Wait about a minute, then reload."
+        )
+
     if response.status_code != 200:
         return None, f"Football data service returned an error ({response.status_code})."
 

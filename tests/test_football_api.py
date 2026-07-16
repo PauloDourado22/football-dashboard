@@ -145,6 +145,15 @@ def test_fetch_json_non_200_returns_error():
     assert "404" in error
 
 
+def test_fetch_json_429_returns_friendly_rate_limit_message():
+    fake_response = Mock(status_code=429)
+    with patch("football_api.requests.get", return_value=fake_response):
+        data, error = api.fetch_json("http://example.test", {}, cache=None)
+    assert data is None
+    assert "rate limit" in error
+    assert "429" not in error
+
+
 def test_fetch_json_caches_successful_response():
     calls = {"n": 0}
 

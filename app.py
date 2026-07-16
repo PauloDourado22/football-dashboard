@@ -34,11 +34,14 @@ if not app.secret_key:
 # How long to cache a successful API response, in seconds. football-data.org's
 # free tier allows only 10 requests/minute; standings and fixtures don't
 # change second-to-second, so a few minutes of staleness is a good trade.
+# Raised from 5 to 15 minutes after hitting 429s during normal manual
+# testing — a page load fires up to 4 calls, so browsing a few leagues/teams
+# within a minute exhausts the free-tier budget fast without a longer cache.
 # NOTE: SimpleCache is in-process memory. It resets on restart and is NOT
 # shared across workers if you later run this under gunicorn -w >1 — swap
 # CACHE_TYPE to "RedisCache" (with CACHE_REDIS_URL) if you scale to multiple
 # workers/dynos.
-CACHE_TTL = 300
+CACHE_TTL = 900
 cache = Cache(app, config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": CACHE_TTL})
 
 # Flask sessions are browser-session-only (wiped when the browser fully
